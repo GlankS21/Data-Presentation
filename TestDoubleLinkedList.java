@@ -13,13 +13,13 @@ public class TestDoubleLinkedList {
         doubleLinkedList.printList();
     }
     static void initDoubleLinkedList(DoubleLinkedList doubleLinkedList) {
-//        doubleLinkedList.insert(new Value("Name 1", "Address 1 Address 1 Address 1 Address 1 Address 1 Address 1 Address 1"), doubleLinkedList.first());
-//        doubleLinkedList.insert(new Value("Name 1", "Address 3"), doubleLinkedList.first());
-        doubleLinkedList.insert(new Value("Name 2", "Address 2"), doubleLinkedList.first());
-        doubleLinkedList.insert(new Value("Name 2", "Address 2"), doubleLinkedList.first());
-        doubleLinkedList.insert(new Value("Name 1", "Address 1"), doubleLinkedList.first());
-        doubleLinkedList.insert(new Value("Name 1", "Address 1"), doubleLinkedList.first());
-//        doubleLinkedList.insert(new Value("Name 4", "Address 4"), doubleLinkedList.next(doubleLinkedList.first()));
+        doubleLinkedList.insert(new Value("Name 1", "Address 1 Address 1 Address 1 Address 1 Address 1 Address 1 Address 1"), doubleLinkedList.first());
+        doubleLinkedList.insert(new Value("Name 1", "Address 3"), doubleLinkedList.end());
+        doubleLinkedList.insert(new Value("Name 2", "Address 2"), doubleLinkedList.end());
+        doubleLinkedList.insert(new Value("Name 2", "Address 2"), doubleLinkedList.end());
+        doubleLinkedList.insert(new Value("Name 1", "Address 1"), doubleLinkedList.end());
+        doubleLinkedList.insert(new Value("Name 1", "Address 1"), doubleLinkedList.end());
+        doubleLinkedList.insert(new Value("Name 4", "Address 4"), doubleLinkedList.next(doubleLinkedList.first()));
     }
     static void delete_dublicate(DoubleLinkedList doubleLinkedList){
         Position cur = doubleLinkedList.first();

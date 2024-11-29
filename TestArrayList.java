@@ -14,7 +14,7 @@ public class TestArrayList {
     }
     static void initArrayList(ArrayList arrayList) {
         arrayList.insert(new Value("Name 1", "Address 1 Address 1 Address 1 Address 1 Address 1 Address 1 Address 1"), arrayList.first());
-        arrayList.insert(new Value("Name 1", "Address 3"), arrayList.first());
+        arrayList.insert(new Value("Name 1", "Address 3"), arrayList.end());
         arrayList.insert(new Value("Name 2", "Address 2"), arrayList.end());
         arrayList.insert(new Value("Name 2", "Address 2"), arrayList.end());
         arrayList.insert(new Value("Name 1", "Address 1"), arrayList.end());

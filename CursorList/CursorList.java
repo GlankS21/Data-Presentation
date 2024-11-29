@@ -6,10 +6,7 @@ public class CursorList implements IList {
     private static final Item[] items;
     private static final Position space;
     private int head;
-
-    /*
-      Создаем массив и space для всех объектов
-     */
+    // Создаем массив и space для всех объектов
     static {
         items = new Item[50];
         space = new Position(0);
@@ -18,12 +15,10 @@ public class CursorList implements IList {
         }
         items[items.length - 1] = new Item(-1);
     }
-    public CursorList(){
-        head = -1;
-    }
+    public CursorList(){ head = -1;}
     @Override
     public void insert(Value value, Position p) {
-        /*
+        /**
           1. Случай 1 — Если p.position == -1
            1.1. Если head == -1 => Поставим в начале
                1.1.1. head = space.position
@@ -37,12 +32,14 @@ public class CursorList implements IList {
                2.5. Заменим значение и next нового элемента Space: items[Space].setItem(new Value(value),-1)
          */
         if (p.position == -1){
+            // Вариант: Если массив пустой
             if (head == -1){
                 head = space.position;
                 space.position = items[space.position].getNext();
                 items[head].setItem(new Value(value), -1);
                 return;
             }
+            // Вариант: Поставим в конце
             int last = Last();
             int Space = space.position;
             space.position = items[space.position].getNext();
@@ -50,13 +47,14 @@ public class CursorList implements IList {
             items[Space].setItem(new Value(value), -1);
             return;
         }
-        /*
+        /**
           2.Случай 2 - p.position == head - Поставим в начале массива
            2.1. Найдем новую позицию, где поставим новый элемент: Space = space.position
            2.2. Изменим значение Space следующим пустом элементом: space.position = items[space.position].getNext();
            2.3. Копируем head и поставим его в позиции Space: items[Space] = new Item(new Value(items[head].getValue()), items[head].getNext());
            2.3. Изменим head: items[head].setItem(new Value(value), Space);
          */
+        // Вариант: Поставим в начале массива
         if (p.position == head){
             int Space = space.position;
             space.position = items[space.position].getNext();
@@ -64,7 +62,7 @@ public class CursorList implements IList {
             items[head].setItem(new Value(value), Space);
             return;
         }
-        /* temp = Prev(p)
+        /** temp = Prev(p)
           3.3. Если существует, поставим новый элемент в середину списка. (temp != -1)
             3.3.1. Найдем элемент current в позиции position: current = items[temp].getNext();
             3.3.2. Найдем новую позицию, где поставим новый элемент: Space = space.position
@@ -73,14 +71,15 @@ public class CursorList implements IList {
             3.3.4. Изменим значение текущего элемента: items[current].setValue(new Value(value));
             3.3.5. Изменим ссылку на следуюший элемент: items[current].setNext(Space);
          */
+        // Поставим в середине
         int temp = Prev(p);
         if (temp != -1){
             int current = items[temp].getNext();
             int Space = space.position;
-            space.position = items[space.position].getNext(); // thay đổi giá trị của Space tới vị trí trống tiếp theo
-            items[Space] = new Item(new Value(items[current].getValue()), items[current].getNext()); // phần tử mới ở vị trí Space = copy giá trị phần tử ở vị trí current
-            items[current].setValue(new Value(value));  // phần tử ở vị trí current nhận giá trị mới
-            items[current].setNext(Space); // phần tử ở vị trí current liên kết với phần tử Space
+            space.position = items[space.position].getNext(); // Новая позция элемента space
+            items[Space] = new Item(new Value(items[current].getValue()), items[current].getNext()); // Создаем копии current в позиции space
+            items[current].setValue(new Value(value)); // В позиции current, старый элемент изменен new Value
+            items[current].setNext(Space);
         }
     }
     /**
@@ -136,12 +135,14 @@ public class CursorList implements IList {
     @Override
     public void delete(Position p) {
         if (head == -1) return;
+        // Удалить head
         if (p.position == head){
             space.position = head;
             items[space.position].setNext(space.position);
             head = items[head].getNext();
             return;
         }
+        // Другий элемент
         int prev = Prev(p);
         if (prev != -1) {
             int current = items[prev].getNext();
@@ -176,11 +177,20 @@ public class CursorList implements IList {
     public Position first() {
         return new Position(head);
     }
+
+    /**
+     * 1. Если list пустой => return new Position(-1)
+     * 2. Если не пустой:
+     *  2.1. Изменим next последнего элемента = позиции space
+     *  2.2. Space получит позицию первый элемент head: space.position = head
+     *  2.3. head = -1
+     *  return new Position(-1)
+     */
     @Override
     public Position makeNull() {
-        if(head == -1) return new Position(-1); // nếu list trống
-        items[Last()].setNext(space.position); // nếu không trống, set next của phần tử cuối bằng position
-        space.position = head; // position == head (vòng tròn)
+        if(head == -1) return new Position(-1);
+        items[Last()].setNext(space.position);
+        space.position = head;
         head = -1;
         return new Position(-1);
     }
@@ -233,7 +243,7 @@ public class CursorList implements IList {
         }
         return -1;
     }
-    /**
+    /** Элемент в последней позиции
      *  1. current = head
      *  2. prev = -1
      *  3. Пока current != -1

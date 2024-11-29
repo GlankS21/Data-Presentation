@@ -8,44 +8,65 @@ public class DoubleLinkedList implements IList{
     @Override
     public void insert(Value value, Position position) {
         /**
-         * 1. Случай 1 — Если position.item == null
-         *  1.1. Если start == null
-         *      1.1.1. start = new Item(new Value(value))
-         *      1.1.2. end = start
-         *  1.2. Если start != null => добавляем в конце
-         *      1.2.1. end.next = new Item(new Value(value))
-         *      1.2.2. Заменим prev последнего элемента: end.getNext.prev = end
-         *      1.2.3. end = end.next
-         */
-        if(position.item == null){
-            if(start == null){
-                start = new Item(new Value(value));
-                end = start;
-                return;
-            }
-            end.setNext(new Item(new Value(value)));
-            end.getNext().setPrev(end);
-            end = end.getNext();
-            return;
-        }
-        /**
-         * 2. Если start == end
-         *  2.1. start.next = new Item(start.getValue())
-         *  2.2. start.setValue = new Value(Value)
-         *  2.3. end = start.getNext()
-         *  2.4. end.setPrev(start)
+         * 1. Если start == end
+         *  1.1. Если start == null => массив пустой
+         *       Если position.item == null => Добавим в начале
+         *       1.1.1. start = new Item(new Value(value))
+         *       1.1.2. end = start
+         *  1.2. Если массив содержит только 1 элемент
+         *      Если position.item == null => Добавим в конуе
+         *          - end = new Item(new Value(value))
+         *          - end.setPrev(start)
+         *          - start.setNext(end)
+         *      Наоборот
+         *          - start.next = new Item(start.getValue())
+         *          - start.setValue = new Value(Value)
+         *          - end = start.getNext()
+         *          - end.setPrev(start)
          */
         if(start == end){
+            if(position.item == null){
+                if(start == null){ // Если массив пустой
+                    start = new Item(new Value(value));
+                    end = start;
+                    return;
+                }
+                end = new Item(new Value(value)); // Добавим в конце
+                end.setPrev(start);
+                start.setNext(end);
+                return;
+            } // Если массив содержит только 1 элемент
             start.setNext(new Item(start.getValue()));
             start.setValue(new Value(value));
             end = start.getNext();
             end.setPrev(start);
             return;
         }
+        /**
+         * 2. Случай 2 — Если position.item == null => добавляем в конце
+         *      2.1. end.next = new Item(new Value(value))
+         *      2.2. Заменим prev последнего элемента: end.getNext.prev = end
+         *      2.3. end = end.next
+         */
+        if(position.item == null){ // Добавим в конце
+            end.setNext(new Item(new Value(value)));
+            end.getNext().setPrev(end);
+            end = end.getNext();
+            return;
+        }
+        /**
+         * 3. Если position.item == end
+         *      3.1. Свяжим элемент end с новым элементом c значенем элемента end: end.setNext(new Item(end.getValue())
+         *      3.2. изменить ссылку на предующий элемент нового элемента: end.getNext().setPrev() = end
+         *      3.3. Изменим значение в позиую end: end.setValue(new Value(value))
+         *      3.4. end = end.getNext()
+         */
+        // Поставим в end
         if(position.item == end){
             end.setNext(new Item(end.getValue()));
             end.getNext().setPrev(end);
             end.setValue(new Value(value));
+            end = end.getNext();
             return;
         }
         /**
@@ -59,13 +80,19 @@ public class DoubleLinkedList implements IList{
          *   3.3.5. Изменим ссылку на следуюший элемент:
          *          current.setNext(newPosition.item)
          */
+        // Поставим в середине
         if (InList(position)){
             Item current = position.item;
-            Position newPosition = new Position(new Item(new Value(current.getValue())));
-            newPosition.item.setNext(current.getNext());
-            newPosition.item.setPrev(current);
-            current.setValue(new Value(value));
-            current.setNext(newPosition.item);
+            Item next = current.getNext();
+            // Создаем новый элемент
+            Item newPosition = new Item(new Value(current.getValue())); // Новый элемент
+            newPosition.setNext(next); //setNext
+            newPosition.setPrev(current); //setPrev
+
+            next.setPrev(newPosition); // set next
+
+            current.setValue(new Value(value)); // set current
+            current.setNext(newPosition);
         }
     }
     /**
@@ -101,28 +128,31 @@ public class DoubleLinkedList implements IList{
     }
     /**
      * 1. Случай 1: Если start == null || end == null || position.item == null => return;
-     * 2. Случай 2: Если position.item == start
+     * 2. Случай 2: Если start == end && position.item == start
+     *      start == null;
+     *      end == null;
+     * 3. Случай 3: Если position.item == start
      *      start = start.getNext();
      *      start.setPrev(null);
-     * 3. Случай 3: Если position.item == end
+     * 4. Случай 4: Если position.item == end
      *      end = end.getPrev();
      *      end.setNext(null);
-     * 4. Остальные случаи:
-     *  4.1. Проверим, существует ли элемент в позиции position: InList(position)
-     *  4.2. Если позиция найдена.
-     *      4.2.1. Надем предующий элемент: prev = positon.item.getPrev();
-     *      4.2.2. prev.setNext() = position.getNext();
-     *      4.2.3. Заменим prev следующего элемента = prev: position.getNext().setPrev(prev);
+     * 5. Остальные случаи:
+     *  5.1. Проверим, существует ли элемент в позиции position: InList(position)
+     *  5.2. Если позиция найдена.
+     *      5.2.1. Надем предующий элемент: prev = positon.item.getPrev();
+     *      5.2.2. prev.setNext() = position.getNext();
+     *      5.2.3. Заменим prev следующего элемента = prev: position.getNext().setPrev(prev);
      */
     @Override
     public void delete(Position position) {
         if (start == null || end == null || position.item == null) return;
+        if(start == end && position.item == start){ // Если массив только содержит 1 элемент
+            start = null;
+            end = null;
+            return;
+        }
         if (position.item == start){
-            if(start == end){
-                start = null;
-                end = null;
-                return;
-            }
             start = start.getNext();
             start.setPrev(null);
             return;
