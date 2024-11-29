@@ -1,8 +1,8 @@
 package LinkedList;
-import ListResources.ListException;
-import ListResources.Value;
+import Resources.ListException;
+import Resources.Value;
 
-public class LinkedList implements IList {
+public class List implements IList {
     private Item head;
     @Override
     public Position end() { return new Position (null);}

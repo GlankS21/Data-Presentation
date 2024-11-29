@@ -1,8 +1,7 @@
 package DoubleLinkedList;
-import ListResources.ListException;
-import ListResources.Value;
-
-public class DoubleLinkedList implements IList{
+import Resources.ListException;
+import Resources.Value;
+public class List implements IList{
     private Item start;
     private Item end;
     @Override

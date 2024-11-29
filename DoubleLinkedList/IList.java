@@ -1,5 +1,5 @@
 package DoubleLinkedList;
-import ListResources.Value;
+import Resources.Value;
 public interface IList {
     Position end();   /** возвращает позицию после последнего */
     void insert(Value value, Position position);  /** вставим x в позицию p */

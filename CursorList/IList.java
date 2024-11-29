@@ -1,5 +1,5 @@
 package CursorList;
-import ListResources.Value;
+import Resources.Value;
 public interface IList {
     Position end();   /** возвращает позицию после последнего */
     void insert(Value value, Position node);  /** вставим x в позицию p */

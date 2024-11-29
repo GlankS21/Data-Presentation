@@ -1,8 +1,8 @@
 package CursorList;
-import ListResources.ListException;
-import ListResources.Value;
+import Resources.ListException;
+import Resources.Value;
 
-public class CursorList implements IList {
+public class List implements IList {
     private static final Item[] items;
     private static final Position space;
     private int head;
@@ -15,7 +15,7 @@ public class CursorList implements IList {
         }
         items[items.length - 1] = new Item(-1);
     }
-    public CursorList(){ head = -1;}
+    public List(){ head = -1;}
     @Override
     public void insert(Value value, Position p) {
         /**

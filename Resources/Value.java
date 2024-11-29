@@ -1,4 +1,4 @@
-package ListResources;
+package Resources;
 public class Value {
     private char[] name = new char[20];
     private char[] address = new char[50];
@@ -61,14 +61,6 @@ public class Value {
         if (this == o) return true;
         if(o == null) return false;
         Value obj = (Value) o;
-//        for (int i = 0; i < name.length && obj.name[i] != '\0'; i++) {
-//            if (name[i] != obj.name[i]) return false;
-//        }
-//        for (int i = 0; i < address.length && obj.address[i] != '\0'; i++) {
-//            if (address[i] != obj.address[i]) {  // obj = a d r e s s 1 null
-//                return false;                    // address = a d r e s s 1  a d r....
-//            }
-//        }
         int i = 0;
         while(i < name.length && obj.name[i] != '\0'){
             if (name[i] != obj.name[i]) return false;

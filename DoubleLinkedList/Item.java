@@ -1,6 +1,6 @@
 package DoubleLinkedList;
 
-import ListResources.Value;
+import Resources.Value;
 
 public class Item {
     private Value value;

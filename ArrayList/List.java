@@ -1,7 +1,7 @@
 package ArrayList;
-import ListResources.ListException;
-import ListResources.Value;
-public class ArrayList implements IList {
+import Resources.ListException;
+import Resources.Value;
+public class List implements IList {
     private int last = -1; //последний занятый
     private final Value[] arr = new Value[50];
     public Position end() {

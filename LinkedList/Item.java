@@ -1,6 +1,6 @@
 package LinkedList;
 
-import ListResources.Value;
+import Resources.Value;
 public class Item {
     private Value value;
     private Item next;
