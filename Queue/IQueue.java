@@ -1,5 +1,5 @@
-package QueueCursor;
-
+package Queue;
+import Resources.Value;
 public interface IQueue {
     void MAKENULL(); // очищает очередь Q, делая ее пустой.
     char FRONT(); // возвращает первый элемент (копия) очереди Q.
