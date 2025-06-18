@@ -1,22 +1,25 @@
 package ManyToMany;
 
 public class Relation {
-    public StudentHash students;
-    public CourseHash courses;
+    StudentHash students;
+    CourseHash courses;
     public Relation() {
         students = new StudentHash();
         courses = new CourseHash();
     }
-
-    /**
-     *  1. Найдем студент и курс
-     *  2. Если все найдены => Проверка существует ли студент в курсе
-     *  3. Создаем новую запись о регистрации студента на курс
-     *      если у студента нет связей => на прямо со студентом
-     *      Иначе в начале
-     *      если у курса нет связей => на прямо со курсом
-     *      Иначе в начале
-     */
+    // Найдем регистрацию (student s, course c)
+    private LinkTarget getRegistration(Student s, Course c) {
+        LinkTarget register = s.firstLink;
+        while (register != null && register.isRegistration()) {
+            LinkTarget course = register;
+            while (course.isRegistration()){
+                course = ((RegistrationRecord) course).course;
+            }
+            if (course == c) return register;
+            register = ((RegistrationRecord) register).student;
+        }
+        return null;
+    }
     public void addStudentToCourse(char[] student, int courseId){
         Student s = students.FindStudent(student);
         if (s == null) throw new RuntimeException("Студент не найден");
@@ -34,16 +37,6 @@ public class Relation {
         register.course = c.firstLink == null ? c : c.firstLink;
         c.firstLink = register;
     }
-
-    /**
-     *  1. Найдем студент и курс
-     *  2. начинаем проверку регистраций студента
-     *      2.1. Идем до получения Course
-     *      2.2. Если найден нужный курс
-     *          2.2.1 Получаем регистрации между студентом и курсом
-     *          2.2.2 Удаляем регистрацию со стороны студента / курса
-     *
-     */
     public void removeStudentFromCourse(char[] student, int courseId){
         // Найдем студент и курс
         Student s = students.FindStudent(student);
@@ -65,24 +58,14 @@ public class Relation {
             }
             // Если найден курс => удалим его
             if (course == c){
-                LinkTarget register = getRegistration(s,c);
-                removeRegistration(register, s);
-                removeRegistration(register, c);
+                removeRegistration(record, s);
+                removeRegistration(record, c);
                 return;
             }
             record = ((RegistrationRecord) record).student;
         }
         System.out.println("Cтудент не является участником курса");
     }
-
-    /**
-     *  1. Найден студент
-     *  2. Получаем его первую регистрацию на курсы
-     *  3. начинаем проверку регистраций студента
-     *      3.1. Идем до получения Course
-     *      3.2. Удаляем регистрацию со стороны студента / курса
-     *      3.3. Переходим на следующий
-     */
     public void removeStudent(char[] name) {
         Student s = students.FindStudent(name);
         if (s == null) {
@@ -104,15 +87,28 @@ public class Relation {
             courses = ((RegistrationRecord) courses).student; // Переходим на следующий курс
         }
     }
-
-    /**
-     *  1. Найден курс
-     *  2. Получаем первую регистрацию студентов
-     *  3. Проходим по всем регистрациям курса
-     *      3.1. Идем до получения student
-     *      3.2. Удаляем регистрацию со стороны студента / курса
-     *      3.3. Переходим на следующий
-     */
+    private void removeRegistration(LinkTarget register, Student student) {
+        if (student.firstLink == register) { // удалим первую регистрацию
+            if (student.firstLink.student.isRegistration())
+                student.firstLink = (RegistrationRecord) student.firstLink.student;
+            else student.firstLink = null;
+        }
+        else {
+            RegistrationRecord prev = getPreviousRegister(register, student);
+            prev.student = ((RegistrationRecord) prev.student).student;
+        }
+    }
+    private void removeRegistration(LinkTarget register, Course course) {
+        if (course.firstLink == register) {
+            if (course.firstLink.course.isRegistration())
+                course.firstLink = (RegistrationRecord) course.firstLink.course;
+            else course.firstLink = null;
+        }
+        else {
+            RegistrationRecord prev = getPreviousRegister(register, course);
+            prev.course = ((RegistrationRecord) prev.course).course;
+        }
+    }
     public void removeCourse(int courseId) {
         Course c = courses.FindCourse(courseId);
         if (c == null) {
@@ -134,14 +130,6 @@ public class Relation {
             students = ((RegistrationRecord) students).course; // Переходим на следующий студент
         }
     }
-
-    /**
-     * 1. Найдем курс
-     * 2. Получаем первую регистрации студентов
-     * 3. Проходим по всем регистрациям курса
-     *  3.1 Отобразим на экране
-     *  3.2 Переходим на следующий
-     */
     public void printStudentsOfCourse(int courseId){
         Course c = courses.FindCourse(courseId);
         if (c == null) {
@@ -184,24 +172,6 @@ public class Relation {
         }
         System.out.println();
     }
-    private String printArray(char[] input){
-        StringBuilder result = new StringBuilder();
-        for (char c : input) result.append(c);
-        return result.toString();
-    }
-    // Найдем регистрацию (student s, course c)
-    private LinkTarget getRegistration(Student s, Course c) {
-        LinkTarget register = s.firstLink;
-        while (register != null && register.isRegistration()) {
-            LinkTarget course = register;
-            while (course.isRegistration()){
-                course = ((RegistrationRecord) course).course;
-            }
-            if (course == c) return register;
-            register = ((RegistrationRecord) register).student;
-        }
-        return null;
-    }
     private RegistrationRecord getPreviousRegister(LinkTarget register, Student s) {
         LinkTarget current = s.firstLink;
         LinkTarget prev = null;
@@ -221,27 +191,5 @@ public class Relation {
             current = ((RegistrationRecord) current).course;
         }
         return (RegistrationRecord) prev;
-    }
-    private void removeRegistration(LinkTarget register, Student student) {
-        if (student.firstLink == register) { // удалим первую регистрацию
-            if (student.firstLink.student.isRegistration())
-                student.firstLink = (RegistrationRecord) student.firstLink.student;
-            else student.firstLink = null;
-        }
-        else {
-            RegistrationRecord prev = getPreviousRegister(register, student);
-            prev.student = ((RegistrationRecord) prev.student).student;
-        }
-    }
-    private void removeRegistration(LinkTarget register, Course course) {
-        if (course.firstLink == register) {
-            if (course.firstLink.course.isRegistration())
-                course.firstLink = (RegistrationRecord) course.firstLink.course;
-            else course.firstLink = null;
-        }
-        else {
-            RegistrationRecord prev = getPreviousRegister(register, course);
-            prev.course = ((RegistrationRecord) prev.course).course;
-        }
     }
 }

@@ -4,11 +4,9 @@ public class StudentHash {
     private final int SIZE = 10;
     public Student[] students;
     private int length = 0;
-    public StudentHash() {
-        students = new Student[SIZE];
-    }
+    public StudentHash() { students = new Student[SIZE]; }
     public void INSERT(char[] name) {
-        if (!hasSpace()) throw new RuntimeException("Нет места для вставки");
+        if (length == SIZE) throw new RuntimeException("Нет места для вставки");
         int i = 0;
         int hash = hash(name);
         int start = HashFunction(hash, i);
@@ -74,9 +72,6 @@ public class StudentHash {
     }
     private int HashFunction(int hash, int i) {
         return (hash + i) % students.length;
-    }
-    private boolean hasSpace() {
-        return length != SIZE;
     }
     private boolean compareCharArrays(char[] arr1, char[] arr2) {
         if (arr1.length != arr2.length) return false;
